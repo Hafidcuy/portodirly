@@ -131,8 +131,9 @@ const en = {
     hidePassword: "Hide",
     sessionExpired: "Your session has expired. Please sign in again.",
     invalidPassword: "Incorrect password.",
-    blocked: (seconds: number) =>
-      `Too many failed attempts. Try again in ${seconds}s.`,
+    // Template `{seconds}`, bukan fungsi — dictionary wajib serializable
+    // agar aman dilewatkan sebagai prop ke Client Component.
+    blocked: "Too many failed attempts. Try again in {seconds}s.",
     signingIn: "Signing in…",
     signOut: "Sign out",
     dashboard: "Dashboard",
@@ -441,8 +442,9 @@ const id: DictionaryShape = {
     hidePassword: "Sembunyi",
     sessionExpired: "Sesi Anda telah berakhir. Silakan masuk kembali.",
     invalidPassword: "Password salah.",
-    blocked: (seconds: number) =>
-      `Terlalu banyak percobaan gagal. Coba lagi dalam ${seconds} detik.`,
+    // Template `{seconds}`, bukan fungsi — dictionary wajib serializable
+    // agar aman dilewatkan sebagai prop ke Client Component.
+    blocked: "Terlalu banyak percobaan gagal. Coba lagi dalam {seconds} detik.",
     signingIn: "Memverifikasi…",
     signOut: "Keluar",
     dashboard: "Dasbor",

@@ -14,7 +14,7 @@ import {
   serializeAttempts,
   verifyPassword,
 } from "@/lib/auth";
-import { dict, getLang } from "@/lib/i18n";
+import { dict, getLang, type Dictionary } from "@/lib/i18n";
 
 /**
  * Masa berlaku sesi admin: 7 hari.
@@ -26,6 +26,17 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 function secureCookie() {
   return process.env.NODE_ENV === "production";
+}
+
+/**
+ * Pesan kunci login sesuai bahasa.
+ *
+ * Kamus menyimpan teks template (`{seconds}`) alih-alih fungsi, supaya seluruh
+ * dictionary serializable dan boleh dikirim sebagai prop ke Client Component
+ * (Next.js/React melarang fungsi melewati batas server → client).
+ */
+function blockedMessage(t: Dictionary, seconds: number): string {
+  return t.admin.blocked.replace("{seconds}", String(seconds));
 }
 
 /**
@@ -44,7 +55,7 @@ export async function login(
   const attemptsRaw = store.get(ATTEMPTS_COOKIE)?.value;
   const lockSeconds = blockedForSeconds(attemptsRaw);
   if (lockSeconds > 0) {
-    return { ...initialActionState, status: "error", message: t.admin.blocked(lockSeconds) };
+    return { ...initialActionState, status: "error", message: blockedMessage(t, lockSeconds) };
   }
 
   const password = String(formData.get("password") ?? "");
@@ -75,7 +86,7 @@ export async function login(
       ...initialActionState,
       status: "error",
       message: blocked
-        ? t.admin.blocked(blockedForSeconds(serialized))
+        ? blockedMessage(t, blockedForSeconds(serialized))
         : t.admin.invalidPassword,
     };
   }
